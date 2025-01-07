@@ -1,22 +1,20 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "module": "CommonJS",
     "moduleResolution": "node",
     "newLine": "LF",
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
     "skipLibCheck": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "suppressExcessPropertyErrors": true,
     "forceConsistentCasingInFileNames": true,
     "preserveSymlinks": true,
     "target": "ES2018",
@@ -28,9 +26,19 @@
     "lib": ["dom", "DOM.Iterable", "ES5", "ES2015", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "esnext"],
     "baseUrl": "./packages",
     "paths": {
-      "@swc-node/*": ["./*/src/index.ts"]
-    }
+      "@swc-node/core": ["./core/index.ts"],
+      "@swc-node/register/*": ["./register/*"],
+      "@integrate/*": ["./integrate/src/*"],
+    },
   },
-  "include": ["./packages", "bench", "./jest.config.js"],
-  "exclude": ["node_modules"]
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/register" },
+    { "path": "./packages/register/tsconfig.esm.json" },
+    { "path": "./packages/jest" },
+    { "path": "./packages/sourcemap-support" },
+    { "path": "./packages/loader" },
+  ],
+  "include": [],
+  "files": [],
 }

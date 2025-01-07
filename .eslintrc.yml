@@ -5,7 +5,7 @@ parserOptions:
     jsx: true
   ecmaVersion: 2020
   sourceType: module
-  project: ./tsconfig.json
+  project: ./tsconfig.lint.json
 
 env:
   browser: true
@@ -18,12 +18,12 @@ plugins:
 
 extends:
   - eslint:recommended
-  - plugin:prettier/recommended
-
+  - prettier
 rules:
   # 0 = off, 1 = warn, 2 = error
   'space-before-function-paren': 0
   'no-useless-constructor': 0
+  'no-redeclare': 0
   'no-undef': 2
   'no-console': [2, { allow: ['error', 'warn', 'info', 'assert'] }]
   'comma-dangle': ['error', 'only-multiline']
@@ -40,6 +40,7 @@ rules:
 
   'import/first': 2
   'import/newline-after-import': 2
+  'import/no-extraneous-dependencies': 2
   'import/order':
     [
       2,
@@ -54,6 +55,8 @@ rules:
           ],
       },
     ]
+
+  '@typescript-eslint/no-redeclare': 2
 
   '@typescript-eslint/adjacent-overload-signatures': 2
 

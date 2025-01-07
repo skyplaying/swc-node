@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "composite": true,
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@subdirectory/*": ["./src/subdirectory/*"]
+    }
+  },
+  "include": ["src", "package.json"]
+}

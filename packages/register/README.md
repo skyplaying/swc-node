@@ -1,9 +1,13 @@
 # `@swc-node/register`
 
+<a href="https://npmcharts.com/compare/@swc-node/register?minimal=true"><img src="https://img.shields.io/npm/dm/@swc-node/register.svg?sanitize=true" alt="Downloads" /></a>
+
+> 🚀 Help me to become a full-time open-source developer by [sponsoring me on Github](https://github.com/sponsors/Brooooooklyn)
+
 ## Usage
 
 ```ts
-const register = require('@swc-node/register')
+const { register } = require('@swc-node/register/register')
 
 register({
   ...
@@ -69,6 +73,8 @@ switch (target) {
   case ts.ScriptTarget.ES2019:
     return 'es2019'
   case ts.ScriptTarget.ES2020:
+  case ts.ScriptTarget.ES2021:
+  case ts.ScriptTarget.ES2022:
   case ts.ScriptTarget.ESNext:
   case ts.ScriptTarget.Latest:
     return 'es2020'
