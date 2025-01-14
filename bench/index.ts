@@ -1,5 +1,6 @@
 import fs from 'fs'
 import os from 'os'
+import { join } from 'path'
 
 import * as babel from '@babel/core'
 // @ts-expect-error
@@ -8,7 +9,7 @@ import * as envPreset from '@babel/preset-env'
 import * as tsPreset from '@babel/preset-typescript'
 import { transformSync as transformSyncNapi, transform as transformNapi } from '@swc-node/core'
 import Benchmark, { Suite } from 'benchmark'
-import chalk from 'chalk'
+import { green } from 'colorette'
 import { transformSync as transformSyncEsbuild, transform as transformEsbuild } from 'esbuild'
 import ts from 'typescript'
 
@@ -20,7 +21,7 @@ const asyncSuite = new Suite('Transform rxjs/AjaxObservable.ts async benchmark')
 
 const parallelSuite = new Suite('Transform rxjs/AjaxObservable.ts parallel benchmark')
 
-const SOURCE_PATH = require.resolve('rxjs/src/internal/observable/dom/AjaxObservable.ts')
+const SOURCE_PATH = join(__dirname, '..', 'node_modules', 'rxjs', 'src', 'internal', 'ajax', 'ajax.ts')
 const SOURCE_CODE = fs.readFileSync(SOURCE_PATH, 'utf-8')
 
 async function run() {
@@ -30,27 +31,28 @@ async function run() {
   })
 
   syncSuite
-    .add('@swc-node/core', () => {
-      transformSyncNapi(SOURCE_CODE, SOURCE_PATH, {
-        target: 'es2016',
-        module: 'commonjs',
-        sourcemap: true,
-      })
-    })
     .add('esbuild', () => {
       transformSyncEsbuild(SOURCE_CODE, {
         sourcefile: SOURCE_PATH,
         loader: 'ts',
         sourcemap: true,
         minify: false,
+        target: 'es2015',
+      })
+    })
+    .add('@swc-node/core', () => {
+      transformSyncNapi(SOURCE_CODE, SOURCE_PATH, {
+        // SWC target es2016 is es2015 in TypeScript
         target: 'es2016',
+        module: 'commonjs',
+        sourcemap: true,
       })
     })
     .add('typescript', () => {
       ts.transpileModule(SOURCE_CODE, {
         fileName: SOURCE_PATH,
         compilerOptions: {
-          target: ts.ScriptTarget.ES2016,
+          target: ts.ScriptTarget.ES2015,
           module: ts.ModuleKind.CommonJS,
           isolatedModules: true,
           sourceMap: true,
@@ -60,7 +62,10 @@ async function run() {
     .add('babel', () => {
       babel.transform(SOURCE_CODE, {
         filename: SOURCE_PATH,
-        presets: [tsPreset, [envPreset, { targets: { node: 'current' }, modules: 'commonjs' }]],
+        presets: [
+          tsPreset,
+          [envPreset, { useBuiltIns: false, loose: true, targets: 'Chrome > 52', modules: 'commonjs' }],
+        ],
         configFile: false,
         babelrc: false,
         sourceMaps: true,
@@ -71,8 +76,10 @@ async function run() {
     })
     .on('complete', function (this: Benchmark.Target & Benchmark.Suite) {
       console.info(
-        `${this.name} bench suite: Fastest is ${chalk.green(
-          this.filter('fastest').map((s: Benchmark.Target) => s.name),
+        `${this.name} bench suite: Fastest is ${green(
+          this.filter('fastest')
+            .map((s: Benchmark.Target) => s.name)
+            .join(''),
         )}`,
       )
       defer()
@@ -121,7 +128,7 @@ async function runAsync(parallel = 1, suite = asyncSuite) {
               loader: 'ts',
               sourcemap: true,
               minify: false,
-              target: 'es2016',
+              target: 'es2015',
             }),
           ),
         )
@@ -142,8 +149,10 @@ async function runAsync(parallel = 1, suite = asyncSuite) {
     })
     .on('complete', function (this: Benchmark.Target & Benchmark.Suite) {
       console.info(
-        `${this.name} bench suite: Fastest is ${chalk.green(
-          this.filter('fastest').map((t: Benchmark.Target) => t.name),
+        `${this.name} bench suite: Fastest is ${green(
+          this.filter('fastest')
+            .map((t: Benchmark.Target) => t.name)
+            .join(''),
         )}`,
       )
       defer()

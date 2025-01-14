@@ -1,6 +1,6 @@
 {
   "name": "@swc-node/core",
-  "version": "1.4.0",
+  "version": "1.13.3",
   "description": "Faster swc nodejs binding",
   "keywords": [
     "swc",
@@ -18,12 +18,14 @@
     "typescript",
     "tsc"
   ],
-  "author": "LongYinan <lynweklm@gmail.com>",
-  "homepage": "https://github.com/Brooooooklyn/swc-node",
+  "author": "LongYinan <github@lyn.one>",
+  "homepage": "https://github.com/swc-project/swc-node",
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "engines": {
     "node": ">= 10"
   },
@@ -33,13 +35,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Brooooooklyn/swc-node.git"
+    "url": "git+https://github.com/swc-project/swc-node.git"
   },
   "bugs": {
-    "url": "https://github.com/Brooooooklyn/swc-node/issues"
+    "url": "https://github.com/swc-project/swc-node/issues"
   },
-  "dependencies": {
-    "@swc/core": "^1.2.54"
+  "peerDependencies": {
+    "@swc/core": ">= 1.4.13",
+    "@swc/types": ">= 0.1"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.6.6",
+    "@swc/types": "^0.1.9"
   },
   "funding": {
     "type": "github",

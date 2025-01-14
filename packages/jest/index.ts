@@ -1,9 +1,7 @@
-import { createHash } from 'crypto'
-
+import { xxh64 } from '@node-rs/xxhash'
+import type { Output } from '@swc/core'
 import { Options, transformJest } from '@swc-node/core'
-import { Output } from '@swc/core'
-
-const Cache = new Map<string, Output>()
+import { readDefaultTsConfig, tsCompilerOptionsToSwcConfig } from '@swc-node/register/read-default-tsconfig'
 
 interface JestConfig26 {
   transform: [match: string, transformerPath: string, options: Options][]
@@ -27,21 +25,19 @@ function getJestTransformConfig(jestConfig: JestConfig26 | JestConfig27): Option
   return {}
 }
 
+const defaultTsConfig = readDefaultTsConfig()
+
 export = {
-  process(src: string, path: string, jestConfig: JestConfig26 | JestConfig27) {
-    if (/\.(t|j)sx?$/.test(path)) {
-      // sha1 is fast, and we don't care about security here
-      const cacheHash = createHash('sha1')
-      cacheHash.update(src)
-      const hash = cacheHash.digest('hex')
-      const cacheKey = `${path}-${hash}`
-      if (Cache.has(cacheKey)) {
-        return Cache.get(cacheKey)
-      }
-      const output = transformJest(src, path, getJestTransformConfig(jestConfig))
-      Cache.set(cacheKey, output)
-      return output
+  process(src: string, path: string, jestConfig: JestConfig26 | JestConfig27): Output | string {
+    if (/\.(tsx?|jsx?|mjs)$/.test(path)) {
+      return transformJest(src, path, {
+        ...tsCompilerOptionsToSwcConfig(defaultTsConfig, path),
+        ...getJestTransformConfig(jestConfig),
+      })
     }
     return src
+  },
+  getCacheKey(src: string, _filepath: string, config: Options) {
+    return xxh64(src + JSON.stringify(config)).toString(16)
   },
 }

@@ -5,24 +5,37 @@
 **_Fast `TypeScript/JavaScript` transformer without `node-gyp` and postinstall script_**.
 
 <p>
-  <a href="https://github.com/Brooooooklyn/swc-node/actions"><img src="https://github.com/Brooooooklyn/swc-node/workflows/CI/badge.svg" alt="Build Status" /></a>
+  <a href="https://github.com/swc-project/swc-node/actions"><img src="https://github.com/swc-project/swc-node/workflows/CI/badge.svg" alt="Build Status" /></a>
   <a href="https://npmcharts.com/compare/@swc-node/core?minimal=true"><img src="https://img.shields.io/npm/dm/@swc-node/core.svg?sanitize=true" alt="Downloads" /></a>
-  <a href="https://github.com/Brooooooklyn/swc-node/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@swc-node/core.svg?sanitize=true" alt="License" /></a>
+  <a href="https://github.com/swc-project/swc-node/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@swc-node/core.svg?sanitize=true" alt="License" /></a>
 </p>
 
-## Support matrix
+## Usage
 
-|                     | node10 | node12 | node14 | node15 |
-| ------------------- | ------ | ------ | ------ | ------ |
-| Windows x64         | ✓      | ✓      | ✓      | ✓      |
-| Windows x32         | ✓      | ✓      | ✓      | ✓      |
-| macOS x64           | ✓      | ✓      | ✓      | ✓      |
-| macOS arm64         | ✓      | ✓      | ✓      | ✓      |
-| Linux x64 gnu       | ✓      | ✓      | ✓      | ✓      |
-| Linux x64 musl      | ✓      | ✓      | ✓      | ✓      |
-| Linux arm gnueabihf | ✓      | ✓      | ✓      | ✓      |
-| Linux arm64 gnu     | ✓      | ✓      | ✓      | ✓      |
-| Android arm64       | ✓      | ✓      | ✓      | ✓      |
+Run TypeScript with node, without compilation or typechecking:
+
+```bash
+npm i -D @swc-node/register
+node -r @swc-node/register script.ts
+node --import @swc-node/register/esm-register script.ts # for esm project with node>=20.6
+node --loader @swc-node/register/esm script.ts # for esm project with node<=20.5, deprecated
+```
+
+Pass `--enable-source-maps` to node for esm projects
+
+Set environment variable SWCRC=true when you would like to load .swcrc file
+
+```bash
+SWCRC=true node -r @swc-node/register script.ts
+```
+
+```typescript
+#!/usr/bin/env -S node --import @swc-node/register/esm-register
+
+// your code
+```
+
+run with shebang, add `TS_NODE_PROJECT=null`(`#!/usr/bin/env TS_NODE_PROJECT=null node --import @swc-node/register/esm-register`) to use ignore tsconfig.json
 
 ## @swc-node/core
 
@@ -32,7 +45,7 @@ Detail: [@swc-node/core](./packages/core)
 
 ### Benchmark
 
-> transform RxJS `AjaxObservable.ts` to ES2015 & CommonJS `JavaScript`. Benchmark code: [bench](./bench/index.js)
+> transform RxJS `AjaxObservable.ts` to ES2015 & CommonJS `JavaScript`. Benchmark code: [bench](./bench/index.ts)
 
 **Hardware info**:
 
@@ -52,18 +65,28 @@ Memory: 16 GB
 #### `transformSync`
 
 ```bash
-@swc-node/core x 434 ops/sec ±0.48% (90 runs sampled)
-esbuild x 51.82 ops/sec ±3.89% (66 runs sampled)
-typescript x 23.91 ops/sec ±12.38% (49 runs sampled)
-babel x 22.93 ops/sec ±9.21% (45 runs sampled)
-Transform rxjs/AjaxObservable.ts benchmark bench suite: Fastest is @swc-node/core
+esbuild x 510 ops/sec ±1.28% (88 runs sampled)
+@swc-node/core x 438 ops/sec ±1.00% (88 runs sampled)
+typescript x 28.83 ops/sec ±10.20% (52 runs sampled)
+babel x 24.21 ops/sec ±10.66% (46 runs sampled)
+Transform rxjs/AjaxObservable.ts benchmark bench suite: Fastest is esbuild
 ```
 
 #### `transform` parallel
 
+`UV_THREADPOOL_SIZE=11 yarn bench`
+
 ```bash
-@swc-node/core x 1,032 ops/sec ±2.68% (72 runs sampled)
-esbuild x 928 ops/sec ±1.48% (78 runs sampled)
+@swc-node/core x 1,253 ops/sec ±0.90% (75 runs sampled)
+esbuild x 914 ops/sec ±1.31% (77 runs sampled)
+Transform rxjs/AjaxObservable.ts parallel benchmark bench suite: Fastest is @swc-node/core
+```
+
+`yarn bench`
+
+```bash
+@swc-node/core x 1,123 ops/sec ±0.95% (77 runs sampled)
+esbuild x 847 ops/sec ±3.74% (71 runs sampled)
 Transform rxjs/AjaxObservable.ts parallel benchmark bench suite: Fastest is @swc-node/core
 ```
 
@@ -110,11 +133,16 @@ Detail: [@swc-node/register](./packages/register)
 
 ### Install dependencies
 
-- `yarn@1.x` latest
-- `rust@nightly` latest
+- `pnpm i`
 
-### Build and test
+### Build and Test
 
-- `yarn`
-- `cargo build --release && yarn build`
-- `yarn test`
+- `pnpm build`
+
+- `pnpm test`
+
+## Sponsors
+
+<p align="center">
+  <img src="https://sponsors.lyn.one/sponsors.svg" alt="sponsors" />
+</p>
